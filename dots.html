@@ -1,0 +1,53 @@
+
+<html>
+<head>
+	<title>Dots</title>
+	<script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+	<script type="text/javascript" src="js/main.js"></script>
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/main.css">
+</head>
+
+	<body>
+		<div class="panel panel-default">
+			<div class="panel-heading">LOGIC DOTS</div>
+				<div class="panel-body panel-bg">
+				<div class="row">
+					<div class="col-md-3">
+						<button type="button" class="btn btn-default float-left" id="new-game">
+						  <span class="glyphicon glyphicon glyphicon-random" aria-hidden="true"></span>
+						</button>
+						<button type="button" class="btn btn-default float-left" id="erase-grid">
+						  <span class="glyphicon glyphicon glyphicon-erase" aria-hidden="true"></span>
+						</button>
+						<div class="input-group input-group-cust float-left">
+						  <input type="text" class="form-control input-height" id="grid-size">
+						  <span class="input-group-btn">
+							<button class="btn btn-default" id="set-grid" type="button">
+							  <span class="glyphicon glyphicon glyphicon-ok" aria-hidden="true"></span>
+							</button>
+						  </span>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<button type="button" class="btn btn-default float-left" id="apply-dots">
+						  <span class="glyphicon glyphicon glyphicon-plus" aria-hidden="true"></span>
+						</button>
+						<button type="button" class="btn btn-default float-left" id="remove-dots">
+						  <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+						</button>
+					</div>
+					
+				</div>
+					<div id="grid-wrap">
+						<div id="grid-row"></div>
+						<div id="grid-col"></div>
+						<div id="grid"></div>
+					</div>
+				</div>
+		</div>
+
+
+	</body>
+</html>

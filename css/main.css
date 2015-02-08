@@ -1,0 +1,104 @@
+body{
+	padding: 30px;
+}
+
+#grid-wrap{
+	position: relative;
+	height: 300px;
+	width: 300px;
+	margin-top:50px;
+}
+
+#grid{
+	position: absolute;
+	right: 50px;
+	top: 50px;
+	width: 200px;
+	height: 200px;
+	margin: 0 auto;
+}
+
+#grid-row{
+	position: absolute;
+	right: 50px;
+	top: 0px;
+	font-size: 30px;
+	text-align:center;
+	line-height: 50px;
+	font-weight: bold;
+	height: 50px;
+	width: 200px;
+}
+
+#grid-col{
+	position: absolute;
+	left: 0px;
+	top: 50px;
+	font-size: 30px;
+	text-align:center;
+	line-height: 50px;
+	font-weight: bold;
+	height: 200px;
+	width: 50px;
+}
+
+.rowcol{
+	position: relative;
+	height: 50px;
+	width: 50px;
+	float:left;
+}
+
+.cell{
+	position: relative;
+	height: 50px;
+	width: 50px;
+	border: 1px solid #FFF;
+	background-color: #7ABBEF;
+	float:left;
+	cursor: pointer;
+}
+
+.dot{
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	top: 50%;
+	margin-top: -10px;
+	left: 50%;
+	margin-left: -10px;
+	background-color: #000;
+}
+
+.dot-actual{
+	position: absolute;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	top: 5px;
+	left: 5px;
+	background-color: #008A23;
+}
+
+.blank{
+	background-color: #BBBBBB;
+	cursor: auto;
+}
+
+.panel-bg{
+	background-color: #F0F0F0;
+}
+
+.input-group-cust{
+	max-width: 100px;
+}
+
+.input-height{
+	max-height: 28px;
+}
+
+.float-left{
+	float:left;
+	margin-right: 10px;
+}
