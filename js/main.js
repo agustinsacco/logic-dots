@@ -1,7 +1,8 @@
-// Globals
+
+// Main Logic Dots Function
 function logicDots(){
 
-	this.shuffleArray = function(o){ //v1.0
+	this.shuffleArray = function(o){
 		for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
 		return o;
 	}
@@ -13,25 +14,32 @@ function logicDots(){
 	this.numdots = 0;
 	this.randGrid = [];
 	this.dots = [];
+	this.dotsSorted = [];
 	this.blank = [];
+	this.hints = 0;
 	
 	// Game play variables
-	this.moves = 0;
+	this.entered = [];
+	this.enteredSorted = [];
 }
 
-logicDots.prototype.play = function(){
-	
-}
 
 logicDots.prototype.setVariables = function(){
+	
 	this.root = Math.sqrt(this.grid.length);
-	this.numdots = (Math.ceil(this.grid.length/(this.root / 2)));
+	this.numdots = (Math.floor(this.grid.length/2.5));
 	this.moves = this.numdots;
 	
 	this.randGrid = this.shuffleArray(this.grid);
 	this.dots = this.randGrid.slice(0,this.numdots);
+	this.dotsSorted = this.dots.sort(function(a, b){return a-b});
 	this.blank = this.shuffleArray(this.randGrid.slice(this.numdots, this.grid.length));
+	this.hints = Math.ceil(this.root / 2);
+	
+	this.entered = [];
+	this.enteredSorted = [];
 }
+
 
 logicDots.prototype.capacity = function(dimension){
 	
@@ -53,12 +61,16 @@ logicDots.prototype.capacity = function(dimension){
 	this.setGrid(this.size);
 }
 
+
 logicDots.prototype.initialize = function(){
 
 	this.initGridWrap = function(size){
 		var wrap = $('#grid-wrap');
 		var dimension = (size * 50) + 100;
-		wrap.css({'width': dimension, 'height': dimension});
+		wrap.css({'width': dimension, 
+				  'height': dimension,
+				  'margin-left': -(dimension/2)
+				});
 	}
 	
 	this.initRow = function(size){
@@ -107,10 +119,17 @@ logicDots.prototype.initialize = function(){
 	this.initGrid(this.size);
 }
 
+
+logicDots.prototype.initHints = function(){
+	var hint = $('.give-hint');
+	hint.html('hints ('+this.hints+')');
+}
+
+
 logicDots.prototype.randomize = function(){
 	
-	this.applyHinters = function(blank){
-		var less = Math.ceil(blank.length / 1.3)
+	this.applyBlanks = function(blank){
+		var less = Math.ceil(blank.length / 2.5)
 		for	(var i=0; i <= less; i++){
 			$('#grid #'+blank[i]).addClass('blank');
 		}
@@ -159,7 +178,7 @@ logicDots.prototype.randomize = function(){
 	}
 	
 	// Add the row and column values
-	this.applyHinters(this.blank);
+	this.applyBlanks(this.blank);
 	
 	// Populate column numbers
 	this.populateColumn(this.root, this.dots);
@@ -169,79 +188,221 @@ logicDots.prototype.randomize = function(){
 		
 }
 
+
 logicDots.prototype.applyDots = function(){
 	for	(var i=0; i <= this.dots.length; i++){
 		$('#grid #'+this.dots[i]).prepend('<div class="dot-actual"></div>');
 	}
 }
 	
+
 logicDots.prototype.removeDots = function(){
 	for	(var i=0; i <= this.dots.length; i++){
 		$('#grid #'+this.dots[i]).find('.dot-actual').remove();
 	}
 }
 	
+
 logicDots.prototype.clearGrid = function(){
-	$('.cell').empty().removeClass('blank');
+	$('.cell').empty().removeClass('blank blankd');
 }
 
-logicDots.prototype.triggerCell = function(cellObject){
+
+logicDots.prototype.triggerCell = function(cellObject, clickType){
 	
 	this.removeDot = function(cell){
-		cell.find('.dot').remove();
+		cell.find('.dot').fadeOut(200, function(){ $(this).remove() });
 	}
 	
 	this.insertDot = function(cell){
-		cell.append('<div class="dot"></div>');
+		cell.append($('<div class="dot"></div>').fadeIn(200));
 	}
 	
-	this.exists = function(cell){
-		if(cell.find('.dot').length != 0)
+	this.removeBlank = function(cell){
+		cell.removeClass('blankd');
+	}
+	
+	this.insertBlank = function(cell){
+		cell.addClass('blankd');
+	}
+	
+	this.existsDot = function(cell){
+		if(cell.find('.dot').length != 0){
 			this.removeDot(cell);
-		else if(cell.find('.dot').length === 0 && !cell.hasClass('blank'))
+			
+			// Lets remove the cell from entered dots if exists
+			var cellnum = parseInt(cell.attr('id'));
+			var torem = this.entered.indexOf(cellnum);
+			if(torem != -1)
+				this.entered.splice(torem, 1);
+		} 
+		else if (cell.find('.dot').length === 0 && !cell.hasClass('blankd') && !cell.hasClass('blank')){
 			this.insertDot(cell);
+			
+			// Lets apply the cell to entered dots if it doesnt exist
+			var cellnum = parseInt(cell.attr('id'));
+			var toadd = this.entered.indexOf(cellnum);
+			if(toadd === -1)
+				this.entered.push(cellnum);
+		}
 	}
 	
-	this.exists(cellObject);
+	this.existsBlank = function(cell){
+		if(cell.hasClass('blankd')){
+			this.removeBlank(cell);
+		}
+		else if(cell.find('.dot').length === 0 && !cell.hasClass('blank')){
+			this.insertBlank(cell);
+		}
+	}
+	
+	if(clickType == 'dot'){
+		this.existsDot(cellObject);
+	}
+	else if(clickType == 'blankd'){
+		this.existsBlank(cellObject);
+	}
+	
+}
+
+
+logicDots.prototype.checkCorrect = function(){
+	// Assumes both arrays given are sorted
+	this.compareArrays = function(array1, array2){
+		// Lets check first if the lengths are even the same
+		if(array1.length === array2.length){
+			var status = true;
+			for(var l=0; l <= array1.length; l++){
+				if(array1[l] != array2[l]){
+					status = false;
+					break;
+				}
+			}
+			return status;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	this.gameWon = function(blank, dots){
+		// Lets add the rest of the blanks
+		for	(var i=0; i <= blank.length; i++){
+			var cell = $('#grid #'+blank[i]);
+			if(!cell.hasClass('blank') && !cell.hasClass('blankd'))
+				$('#grid #'+blank[i]).addClass('blankd');
+		}
+		
+		// Now lets green out the dots
+		for	(var i=0; i <= dots.length; i++){
+			$('#grid #'+this.dots[i]).find('.dot').addClass('won');
+		}
+		
+		// Finally lets disable the grid
+		$('#grid').find('.cell').off();
+		// Wait a bit and set the next level
+		setTimeout(function(){
+			$('#new-game').click();
+		}, 1500);
+	}
+	
+	// Lets sort the entered array;
+	this.enteredSorted = this.entered.sort(function(a, b){return a-b});	
+	
+	if(this.compareArrays(this.dotsSorted, this.enteredSorted))
+		this.gameWon(this.blank, this.dots);
+}
+
+
+logicDots.prototype.applyHint = function(){
+	// Lets check if they have any hints left
+	if(this.hints > 0){
+		// Decrement hints
+		this.hints--;
+		
+		// Get the difference between dots and entered
+		var diff = $(this.dots).not(this.entered).get();
+		// Now shuffle the diff and get first element
+		var hint = this.shuffleArray(diff);
+		// Add the chosen hint to entered dots
+		this.entered.push(hint[0]);
+		// Add dot
+		var cell = $('#grid').find('#'+hint[0]);
+		cell.append($('<div class="dot"></div>').fadeIn(200));
+		//Update button
+		var hint = $('.give-hint');
+		
+		if(this.hints >= 1)
+			hint.html('hints ('+this.hints+')');
+		else
+			hint.html('none left');
+	}
+}
+
+
+function playGame(logicDots){
+		
+	$(function(){
+		
+		// Lets start a 4x4 on load
+		logicDots.capacity(4);
+		logicDots.setVariables();
+		logicDots.initialize();
+		logicDots.initHints();
+		logicDots.randomize();
+			
+		// Creates a new game (binded button)
+		$('#new-game').click(function(){
+			logicDots.clearGrid();
+			logicDots.setVariables();
+			logicDots.initialize();
+			logicDots.initHints();
+			logicDots.randomize();
+		});
+		
+		// Sets the grid on dropdown change
+		$('.set-grid').click(function(){
+			var value = parseInt($(this).data('val'));
+			if(value != 0){
+				logicDots.capacity(value);
+				logicDots.setVariables();
+				logicDots.initialize();
+				logicDots.initHints();
+				logicDots.randomize();
+			}
+		});
+		
+		$('.give-hint').click(function(){
+			logicDots.applyHint();
+			// Lets see if we won after applying this hint
+			logicDots.checkCorrect();
+		});
+		
+		// Adds empty spot on the grid
+		$('#grid').on('mousedown', '.cell', function(e){ 
+		document.oncontextmenu = function() {return false;};
+			if(e.button === 0){
+				var self = $(this);
+				var type = 'dot';
+				logicDots.triggerCell(self, type);
+				// Lets see if we won after applying last dot
+				logicDots.checkCorrect();
+				console.log(logicDots.dots, logicDots.entered);
+			}
+			else if(e.button === 2) { 
+				var self = $(this);
+				var type = 'blankd';
+				logicDots.triggerCell(self, type);
+			} 
+			return true; 
+		});
+	
+	});
 }
 
 /* ---------------------------------- */
 // Lets initialize the logicDots object
 /* ---------------------------------- */
 
-var g = new logicDots();
-
-// Menu Events
-$(function(){
-
-	$('#new-game').click(function(){
-		g.clearGrid();
-		g.setVariables();
-		g.randomize();
-	});
-	
-	$('#erase-grid').click(function(){
-		g.clearGrid();
-	});
-	
-	$('#apply-dots').click(function(){
-		g.applyDots();
-	});
-	
-	$('#remove-dots').click(function(){
-		g.removeDots();
-	});
-	
-	$('#set-grid').click(function(){
-		var value = $('#grid-size').val();
-		g.capacity(value);
-		g.setVariables();
-		g.initialize();
-		g.randomize();
-	});
-	
-	$('#grid').on('click', '.cell', function(){
-		var self = $(this);
-		g.triggerCell(self);
-	});
-});
+var lg = new logicDots();
+playGame(lg);

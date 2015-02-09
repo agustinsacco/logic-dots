@@ -1,31 +1,125 @@
+@font-face {
+    font-family: 'Arcade';
+    src: url('../font/eddie.ttf');
+}
+
+@font-face {
+    font-family: 'Game';
+    src: url('../font/game.ttf');
+}
+
+title{
+	font-family: Arcade;
+}
+
 body{
-	padding: 30px;
+	font-family: Arcade;
+	background-color: #666666;
+}
+
+.game-wrap{
+	width: 100%;
+	max-width: 450px;
+	margin:10px auto;
+	background-color: #1E1E1E;
+	border: 7px solid #FFF;
+	border-radius: 7px
+}
+
+header{
+	width: 100%;
+	height: auto;
+	text-align:center;
+}
+
+header span{
+	text-transform:uppercase;
+	font-family: Arcade;
+	font-size: 50px;
+	width: 100%;
+	text-align:center;
+	color: #FFF
+}
+
+.button{
+	height: 30px;
+	line-height: 30px;
+	font-family: Game;
+	font-size: 18px;
+	background-color: #E94E0C;
+	color: #FFF;
+	text-align:center;
+	text-transform:uppercase;
+	border-radius: 3px;
+	cursor: pointer;
+}
+
+.button:hover{
+	background-color: #F57741;
+}
+
+.button.small{
+	width: 80px;
+	margin: 5px;
+	float:left;
+}
+
+.button.medium {
+	width: 110px;
+	margin: 5px auto;
+}
+
+#left{
+	float:left;
+}
+
+.button.large{
+	width: 240px;
+	margin: 5px;
+}
+
+.button-group-center{
+	width: 270px;
+	height: 40px;
+	margin: 5px auto;
+}
+
+.button-center{
+	width: 250px;
+	height: 40px;
+	margin: 5px auto;
 }
 
 #grid-wrap{
 	position: relative;
 	height: 300px;
 	width: 300px;
-	margin-top:50px;
+	
+	left: 50%;
+	margin-left: -150px;
 }
 
 #grid{
 	position: absolute;
-	right: 50px;
-	top: 50px;
+	right: 45px;
+	top: 45px;
 	width: 200px;
 	height: 200px;
-	margin: 0 auto;
+	border:5px solid #E94E0C;
+	background-color: #E94E0C;
+	border-radius: 5px;
 }
 
 #grid-row{
 	position: absolute;
 	right: 50px;
 	top: 0px;
-	font-size: 30px;
+	font-family: Game;
+	font-size: 20px;
 	text-align:center;
 	line-height: 50px;
-	font-weight: bold;
+	font-weight: normal;
+	color: #FFF;
 	height: 50px;
 	width: 200px;
 }
@@ -34,10 +128,12 @@ body{
 	position: absolute;
 	left: 0px;
 	top: 50px;
-	font-size: 30px;
+	font-family: Game;
+	font-size: 20px;
 	text-align:center;
 	line-height: 50px;
-	font-weight: bold;
+	font-weight: normal;
+	color: #FFF;
 	height: 200px;
 	width: 50px;
 }
@@ -51,23 +147,25 @@ body{
 
 .cell{
 	position: relative;
-	height: 50px;
-	width: 50px;
-	border: 1px solid #FFF;
+	height: 46px;
+	width: 46px;
+	margin:2px;
 	background-color: #7ABBEF;
+	border-radius: 4px;
 	float:left;
 	cursor: pointer;
+	transition: all 0.3s;
 }
 
 .dot{
 	position: absolute;
-	width: 20px;
-	height: 20px;
+	width: 30px;
+	height: 30px;
 	border-radius: 50%;
 	top: 50%;
-	margin-top: -10px;
+	margin-top: -15px;
 	left: 50%;
-	margin-left: -10px;
+	margin-left: -15px;
 	background-color: #000;
 }
 
@@ -82,21 +180,21 @@ body{
 }
 
 .blank{
-	background-color: #BBBBBB;
+	background-color: #9A9A9A;
 	cursor: auto;
 }
 
-.panel-bg{
-	background-color: #F0F0F0;
+.blankd{
+	background-color: #BBBBBB;
+	transition: all 0.3s;
 }
 
-.input-group-cust{
-	max-width: 100px;
+.won{
+	background-color: #008A23;
+	transition: all 0.3s;
 }
 
-.input-height{
-	max-height: 28px;
-}
+
 
 .float-left{
 	float:left;
